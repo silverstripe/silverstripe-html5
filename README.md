@@ -10,6 +10,13 @@
 
 ## Summary
 
+This module adds further HTML 5 support to SilverStripe.
+
+Although SilverStripe supports using HTML 5 in templates out of the box, there are
+some limitations in the use of HTML in the content managed through the CMS.
+
+#### HTMLText & HTMLVarchar
+
 This module allows SilverStripe to support HTML 5 in HTMLText and HTMLVarchar fields, by
 providing a subclass of HTMLValue that uses the third party html5lib and causing the Injector
 to use this subclass by default.
