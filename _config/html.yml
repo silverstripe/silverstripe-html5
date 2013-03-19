@@ -1,0 +1,6 @@
+---
+After: 'framework/html'
+---
+Injector:
+  HTMLValue:
+    class: SS_HTML5Value
