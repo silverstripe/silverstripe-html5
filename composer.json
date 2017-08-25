@@ -1,15 +1,15 @@
 {
-	"name": "silverstripe/html5",
-	"description": "HTML5 support for SilverStripe",
-	"type": "silverstripe-module",
-	"keywords": ["silverstripe", "html5", "cwp"],
-	"license": "BSD-3-Clause",
-	"require": {
-		"silverstripe/framework": "3.*"
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-master": "1.0.x-dev"
-		}
-	}
+    "name": "silverstripe/html5",
+    "description": "HTML5 support for SilverStripe",
+    "type": "silverstripe-module",
+    "keywords": [
+        "silverstripe",
+        "html5",
+        "cwp"
+    ],
+    "license": "BSD-3-Clause",
+    "require": {
+        "silverstripe/framework": "3.*"
+    },
+    "extra": []
 }
