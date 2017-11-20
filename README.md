@@ -1,12 +1,15 @@
 # HTML5 support for SilverStripe
 
+[![Build Status](https://travis-ci.org/silverstripe/silverstripe-html5.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-html5)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/?branch=master)
+
 ## Maintainer Contact
 
 * Hamish Friedlander <hamish@silverstripe.com>
 
 ## Requirements
 
-* SilverStripe 3.1 Beta 3 or higher
+* SilverStripe 3.1 or higher
 
 ## Summary
 
