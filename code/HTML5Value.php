@@ -3,14 +3,13 @@
 namespace SilverStripe\HTML5;
 
 use Exception;
+use Masterminds\HTML5;
 use SilverStripe\View\Parsers\HTMLValue;
 
 class HTML5Value extends HTMLValue
 {
     public function setContent($content)
     {
-        require_once(HTML5LIB_PATH.'/HTML5/Parser.php');
-
         // Convert any errors to exceptions
         set_error_handler(
             function ($no, $str) {
@@ -21,7 +20,8 @@ class HTML5Value extends HTMLValue
 
         // Use HTML5lib to parse the HTML fragment
         try {
-            $document = \HTML5_Parser::parse(
+            $parser = new HTML5;
+            $document = $parser->loadHTML(
                 '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head>'.
                 "<body>$content</body></html>"
             );
