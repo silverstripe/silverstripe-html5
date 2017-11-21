@@ -1,20 +1,26 @@
 <?php
+
+namespace SilverStripe\HTML5\Tests;
+
+use SilverStripe\HTML5\HTML5Value;
+use SilverStripe\Dev\SapphireTest;
+
 /**
  * @package framework
  * @subpackage tests
  */
-class SS_HTML5ValueTest extends SapphireTest
+class HTML5ValueTest extends SapphireTest
 {
     public function testInvalidHTMLParsing()
     {
-        $value = new SS_HTML5Value();
+        $value = new HTML5Value();
 
-        $invalid = array(
-            '<p>Enclosed Value</p></p>'                              => '<p>Enclosed Value</p><p></p>',
-            '<meta content="text/html"></meta>'                      => '<meta content="text/html">',
-            '<p><div class="example"></div></p>'                     => '<p></p><div class="example"></div><p></p>'
-        );
-        
+        $invalid = [
+            '<p>Enclosed Value</p></p>'          => '<p>Enclosed Value</p><p></p>',
+            '<meta content="text/html"></meta>'  => '<meta content="text/html">',
+            '<p><div class="example"></div></p>' => '<p></p><div class="example"></div><p></p>'
+        ];
+
         foreach ($invalid as $input => $expected) {
             $value->setContent($input);
             $this->assertEquals($expected, $value->getContent(), 'Invalid HTML can be parsed');
@@ -23,7 +29,7 @@ class SS_HTML5ValueTest extends SapphireTest
 
     public function testUtf8Saving()
     {
-        $value = new SS_HTML5Value();
+        $value = new HTML5Value();
 
         $value->setContent('<p>ö ß ā い 家</p>');
         $this->assertEquals('<p>ö ß ā い 家</p>', $value->getContent());
@@ -31,7 +37,7 @@ class SS_HTML5ValueTest extends SapphireTest
 
     public function testWhitespaceHandling()
     {
-        $value = new SS_HTML5Value();
+        $value = new HTML5Value();
 
         $value->setContent('<p></p> <p></p>');
         $this->assertEquals('<p></p> <p></p>', $value->getContent());
@@ -39,13 +45,13 @@ class SS_HTML5ValueTest extends SapphireTest
 
     public function testInvalidHTMLTagNames()
     {
-        $value = new SS_HTML5Value();
+        $value = new HTML5Value();
 
-        $invalid = array(
+        $invalid = [
             '<p><div><a href="test-link"></p></div>',
             '<html><div><a href="test-link"></a></a></html_>'
-        );
-        
+        ];
+
         foreach ($invalid as $input) {
             $value->setContent($input);
 
@@ -59,7 +65,7 @@ class SS_HTML5ValueTest extends SapphireTest
 
     public function testMixedNewlines()
     {
-        $value = new SS_HTML5Value();
+        $value = new HTML5Value();
 
         $value->setContent("<p>paragraph</p>\n<ul><li>1</li>\r\n</ul>");
         $this->assertEquals(

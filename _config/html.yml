@@ -1,6 +1,6 @@
 ---
 After: 'framework/html'
 ---
-Injector:
-  HTMLValue:
-    class: SS_HTML5Value
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\View\Parsers\HTMLValue:
+    class: SilverStripe\HTML5\HTML5Value

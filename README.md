@@ -2,14 +2,13 @@
 
 [![Build Status](https://travis-ci.org/silverstripe/silverstripe-html5.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-html5)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/?branch=master)
-
-## Maintainer Contact
-
-* Hamish Friedlander <hamish@silverstripe.com>
+[![codecov](https://codecov.io/gh/silverstripe/silverstripe-html5/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-html5)
 
 ## Requirements
 
-* SilverStripe 3.1 or higher
+* SilverStripe 4.0 or higher
+
+For a SilverStripe 3.x compatible version of this module, please see the [1.0 branch, or 1.x release line](https://github.com/silverstripe/silverstripe-html5/tree/1.0#readme).
 
 ## Summary
 
