@@ -2,8 +2,8 @@
 
 namespace SilverStripe\HTML5\Tests;
 
-use SilverStripe\HTML5\HTML5Value;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\HTML5\HTML5Value;
 
 /**
  * @package framework
@@ -16,9 +16,8 @@ class HTML5ValueTest extends SapphireTest
         $value = new HTML5Value();
 
         $invalid = [
-            '<p>Enclosed Value</p></p>'          => '<p>Enclosed Value</p><p></p>',
-            '<meta content="text/html"></meta>'  => '<meta content="text/html">',
-            '<p><div class="example"></div></p>' => '<p></p><div class="example"></div><p></p>'
+            '<p>Enclosed Value</p></p>'          => '<p>Enclosed Value</p>',
+            '<p><div class="example"></div></p>' => '<p></p><div class="example"></div>'
         ];
 
         foreach ($invalid as $input => $expected) {
