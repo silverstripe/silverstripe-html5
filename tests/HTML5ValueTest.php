@@ -84,7 +84,7 @@ class HTML5ValueTest extends SapphireTest
                 return 'bit of test shortcode output';
             }
         );
-        $content = DBHTMLText::create('Test', ['shortcodes'=>true])
+        $content = DBHTMLText::create('Test', ['shortcodes' => true])
             ->setValue('<p>Some content with a [test_shortcode] and a <br /> followed by an <hr> in it.</p>')
             ->forTemplate();
         $this->assertContains(
