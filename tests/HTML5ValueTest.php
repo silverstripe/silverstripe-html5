@@ -4,6 +4,8 @@ namespace SilverStripe\HTML5\Tests;
 
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\HTML5\HTML5Value;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\View\Parsers\ShortcodeParser;
 
 /**
  * @package framework
@@ -71,6 +73,24 @@ class HTML5ValueTest extends SapphireTest
             "<p>paragraph</p>\n<ul><li>1</li>\n</ul>",
             $value->getContent(),
             'Newlines get converted'
+        );
+    }
+
+    public function testShortcodeValue()
+    {
+        ShortcodeParser::get('default')->register(
+            'test_shortcode',
+            function () {
+                return 'bit of test shortcode output';
+            }
+        );
+        $content = DBHTMLText::create('Test', ['shortcodes'=>true])
+            ->setValue('<p>Some content with a [test_shortcode] and a <br /> followed by an <hr> in it.</p>')
+            ->forTemplate();
+        $this->assertContains(
+            // hr is flow content, not phrasing content, so must be corrected to be outside the p tag.
+            '<p>Some content with a bit of test shortcode output and a <br> followed by an </p><hr> in it.',
+            $content
         );
     }
 }

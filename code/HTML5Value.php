@@ -3,7 +3,7 @@
 namespace SilverStripe\HTML5;
 
 use Exception;
-use Masterminds\HTML5;
+use IvoPetkov\HTML5DOMDocument;
 use SilverStripe\View\Parsers\HTMLValue;
 
 class HTML5Value extends HTMLValue
@@ -20,8 +20,9 @@ class HTML5Value extends HTMLValue
 
         // Use HTML5lib to parse the HTML fragment
         try {
-            $parser = new HTML5;
-            $document = $parser->loadHTML(
+            $content = str_replace("\r\n", "\n", $content);
+            $document = new HTML5DOMDocument;
+            $document->loadHTML(
                 '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head>'.
                 "<body>$content</body></html>"
             );
