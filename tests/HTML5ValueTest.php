@@ -6,6 +6,7 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\HTML5\HTML5Value;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\Parsers\ShortcodeParser;
+use SilverStripe\Core\Convert;
 
 /**
  * @package framework
@@ -18,8 +19,9 @@ class HTML5ValueTest extends SapphireTest
         $value = new HTML5Value();
 
         $invalid = [
-            '<p>Enclosed Value</p></p>'          => '<p>Enclosed Value</p>',
-            '<p><div class="example"></div></p>' => '<p></p><div class="example"></div>'
+            '<p>Enclosed Value</p></p>'          => '<p>Enclosed Value</p><p></p>',
+            '<meta content="text/html"></meta>'  => '<meta content="text/html">',
+            '<p><div class="example"></div></p>' => '<p></p><div class="example"></div><p></p>'
         ];
 
         foreach ($invalid as $input => $expected) {
@@ -92,5 +94,45 @@ class HTML5ValueTest extends SapphireTest
             '<p>Some content with a bit of test shortcode output and a <br> followed by an </p><hr> in it.',
             $content
         );
+    }
+
+    public function testEntities()
+    {
+        $content = '<a href="http://domain.test/path?two&vars">ampersand &amp; test & link</a>';
+        $output = new HTML5Value($content);
+        $output = $output->getContent();
+        $this->assertEquals(
+            '<a href="http://domain.test/path?two&amp;vars">ampersand &amp; test &amp; link</a>',
+            $output
+        );
+    }
+
+    public function testShortcodeEntities()
+    {
+        ShortcodeParser::get('default')->register(
+            'sitetree_link_test',
+            // A mildly stubbed copy from SilverStripe\CMS\Model\SiteTree::link_shortcode_handler
+            function ($arguments, $content = null, $parser = null) {
+                $link = Convert::raw2att('https://google.com/search?q=unit&test');
+                if ($content) {
+                    $link = sprintf('<a href="%s">%s</a>', $link, $parser->parse($content));
+                }
+                return $link;
+            }
+        );
+        $content = [
+            '[sitetree_link_test,id=2]' => 'https://google.com/search?q=unit&amp;test',
+            // the random [ triggers the shortcode parser, which seems to be where problems arise.
+            '<a href="https://google.com/search?q=unit&test"> [ non shortcode link</a>' =>
+                '<a href="https://google.com/search?q=unit&amp;test"> [ non shortcode link</a>',
+            '[sitetree_link_test,id=1]test link[/sitetree_link_test]' =>
+                '<a href="https://google.com/search?q=unit&amp;test">test link</a>'
+        ];
+        foreach ($content as $input => $expected) {
+            $output = DBHTMLText::create('Test', ['shortcodes' => true])
+                ->setValue($input)
+                ->forTemplate();
+            $this->assertEquals($expected, $output);
+        }
     }
 }
