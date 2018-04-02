@@ -3,7 +3,6 @@
 namespace SilverStripe\HTML5;
 
 use Exception;
-use IvoPetkov\HTML5DOMDocument;
 use SilverStripe\View\Parsers\HTMLValue;
 
 class HTML5Value extends HTMLValue
@@ -18,12 +17,24 @@ class HTML5Value extends HTMLValue
             error_reporting()
         );
 
-        // Use HTML5lib to parse the HTML fragment
+        // Use HTML5 parser to parse the HTML fragment
         try {
             $content = str_replace("\r\n", "\n", $content);
-            $document = new HTML5DOMDocument;
-            $document->loadHTML(
-                '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head>'.
+            $parserPath = implode(
+                DIRECTORY_SEPARATOR,
+                [
+                    dirname(__DIR__),
+                    'thirdparty',
+                    'html5lib-php',
+                    'library',
+                    'HTML5',
+                    'Parser.php'
+                ]
+            );
+            require_once $parserPath;
+            $document = \HTML5_Parser::parse(
+                "<!DOCTYPE html>\n" .
+                '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head>' .
                 "<body>$content</body></html>"
             );
         } catch (Exception $e) {
