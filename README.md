@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/silverstripe/silverstripe-html5.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-html5)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/?branch=master)
 [![codecov](https://codecov.io/gh/silverstripe/silverstripe-html5/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-html5)
+[![SilverStripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
 
 ## Requirements
 
