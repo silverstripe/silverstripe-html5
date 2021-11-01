@@ -89,7 +89,7 @@ class HTML5ValueTest extends SapphireTest
         $content = DBHTMLText::create('Test', ['shortcodes' => true])
             ->setValue('<p>Some content with a [test_shortcode] and a <br /> followed by an <hr> in it.</p>')
             ->forTemplate();
-        $this->assertContains(
+        $this->assertStringContainsString(
             // hr is flow content, not phrasing content, so must be corrected to be outside the p tag.
             '<p>Some content with a bit of test shortcode output and a <br> followed by an </p><hr> in it.',
             $content
