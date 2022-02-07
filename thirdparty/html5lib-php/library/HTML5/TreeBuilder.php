@@ -1354,9 +1354,21 @@ class HTML5_TreeBuilder {
                     $this->insertCDATAElement($token);
                 break;
 
-                case 'noembed': case 'noscript':
-                    // XSCRIPT: should check scripting flag
+                case 'noembed':
                     $this->insertCDATAElement($token);
+                break;
+
+                case 'noscript':
+                    // XSCRIPT: should check scripting flag
+
+                    if($this->elementInScope('noscript')) {
+                        $this->emitToken(array(
+                            'name' => 'noscript',
+                            'type' => HTML5_Tokenizer::ENDTAG
+                        ));
+                    }
+                    $this->reconstructActiveFormattingElements();
+                    $this->insertElement($token);
                 break;
 
                 /* A start tag whose tag name is "select" */
@@ -3837,4 +3849,3 @@ class HTML5_TreeBuilder {
         }
     }
 }
-
