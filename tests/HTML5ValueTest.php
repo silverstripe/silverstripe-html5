@@ -135,4 +135,20 @@ class HTML5ValueTest extends SapphireTest
             $this->assertEquals($expected, $output);
         }
     }
+
+    public function testValidHTMLInNoscriptTags()
+    {
+        $value = new HTML5Value();
+
+        $noscripts = [
+            '<noscript><p>Enclosed Value</p></noscript>',
+            '<noscript><span class="test">Enclosed Value</span></noscript>',
+            '<noscript><img src="/test.jpg" alt="test"></noscript>',
+        ];
+
+        foreach ($noscripts as $noscript) {
+            $value->setContent($noscript);
+            $this->assertEquals($noscript, $value->getContent(), 'Child tags are left untouched in noscript tags.');
+        }
+    }
 }
