@@ -2289,7 +2289,7 @@ class HTML5_Tokenizer {
             // alphanumeric so we can just concat it to whatever we get later).
             $this->stream->unget();
             if ($char !== false) {
-                $chars = substr($chars, 0, -1);
+                $chars = substr((string) $chars, 0, -1);
             }
 
             /* If no match can be made, then this is a parse error.
@@ -2305,7 +2305,7 @@ class HTML5_Tokenizer {
             /* If the last character matched is not a U+003B SEMICOLON
             (;), there is a parse error. */
             $semicolon = true;
-            if (substr($id, -1) !== ';') {
+            if (substr((string) $id, -1) !== ';') {
                 $this->emitToken(array(
                     'type' => self::PARSEERROR,
                     'data' => 'named-entity-without-semicolon'
@@ -2324,8 +2324,8 @@ class HTML5_Tokenizer {
             and nothing is returned. */
             if ($inattr && !$semicolon) {
                 // The next character is either the next character in $chars or in the stream.
-                if (strlen($chars) > strlen($id)) {
-                    $next = substr($chars, strlen($id), 1);
+                if (strlen((string) $chars) > strlen((string) $id)) {
+                    $next = substr((string) $chars, strlen((string) $id), 1);
                 } else {
                     $next = $this->stream->char();
                     $this->stream->unget();
@@ -2342,7 +2342,7 @@ class HTML5_Tokenizer {
             /* Otherwise, return a character token for the character
             corresponding to the character reference name (as given
             by the second column of the named character references table). */
-            return HTML5_Data::utf8chr($codepoint) . substr($chars, strlen($id));
+            return HTML5_Data::utf8chr($codepoint) . substr((string) $chars, strlen((string) $id));
         }
     }
 

@@ -6,7 +6,7 @@
  */
 
 $output = dirname(__FILE__) . '/../library/HTML5/named-character-references.ser';
-if (file_exists($output)) {
+if (file_exists((string) $output)) {
     echo 'Output file '.realpath($output).' already exists; delete it first';
     exit;
 }
@@ -17,12 +17,12 @@ if (extension_loaded('pecl_http')) {
     $request->send();
     $html = $request->getResponseBody();
 } else {
-    $html = file_get_contents($url);
+    $html = file_get_contents((string) $url);
 }
 
 preg_match_all(
     '#<code title="">\s*([^<]+?)\s*</code>\s*</td>\s*<td>\s*U\+([^<]+?)\s*<#',
-    $html, $matches, PREG_SET_ORDER);
+    (string) $html, $matches, PREG_SET_ORDER);
 
 $table = array();
 foreach ($matches as $match) {
@@ -41,7 +41,7 @@ foreach ($matches as $match) {
     }
     
     // Set the key codepoint to the codepoint.
-    $subtable['codepoint'] = hexdec($codepoint);
+    $subtable['codepoint'] = hexdec((string) $codepoint);
 }
 
-file_put_contents($output, serialize($table));
+file_put_contents((string) $output, serialize($table));

@@ -12,7 +12,7 @@ class HTML5_TestData
         $full_glob =
             realpath(dirname(__FILE__) . '/../../../testdata/' . $type) .
             DIRECTORY_SEPARATOR . $glob;
-        return glob($full_glob);
+        return glob((string) $full_glob);
     }
     /**
      * This function generates unique test case classes corresponding
@@ -20,11 +20,11 @@ class HTML5_TestData
      */
     static public function generateTestCases($base, $prefix, $type, $glob) {
         foreach (HTML5_TestData::getList($type, $glob) as $filename) {
-            $name = str_replace('-', '', basename($filename));
-            $name = ucfirst(substr($name, 0, strcspn($name, '.')));
+            $name = str_replace('-', '', basename((string) $filename));
+            $name = ucfirst(substr((string) $name, 0, strcspn((string) $name, '.')));
             if ($type === 'tree-construction') {
                 // skip XFOREIGN tests for now
-                $num = (int) substr($name, 5);
+                $num = (int) substr((string) $name, 5);
                 if ($num >= 9) continue;
             }
             $pfilename = var_export($filename, true);
@@ -39,9 +39,9 @@ class HTML5_TestData
         $test = array();
         $newTestHeading = null;
         $heading = null;
-        foreach (explode("\n", file_get_contents($filename)) as $line) {
+        foreach (explode("\n", (string) file_get_contents((string) $filename)) as $line) {
             if ($line !== '' && $line[0] === '#') {
-                $newHeading = substr($line, 1);
+                $newHeading = substr((string) $line, 1);
                 if (!$newTestHeading) {
                     $newTestHeading = $newHeading;
                 } elseif ($newHeading === $newTestHeading) {
@@ -62,7 +62,7 @@ class HTML5_TestData
         // normalize
         foreach ($this->tests as &$test) {
             foreach ($test as $key => $value) {
-                $test[$key] = rtrim($value, "\n");
+                $test[$key] = rtrim((string) $value, "\n");
             }
         }
     }

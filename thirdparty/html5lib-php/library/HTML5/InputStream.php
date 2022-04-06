@@ -73,7 +73,7 @@ class HTML5_InputStream {
         // omitted.
         if (extension_loaded('iconv')) {
             // non-conforming
-            $data = @iconv('UTF-8', 'UTF-8//IGNORE', $data);
+            $data = @iconv('UTF-8', 'UTF-8//IGNORE', (string) $data);
         } else {
             // we can make a conforming native implementation
             throw new Exception('Not implemented, please install mbstring or iconv');
@@ -81,8 +81,8 @@ class HTML5_InputStream {
 
         /* One leading U+FEFF BYTE ORDER MARK character must be
         ignored if any are present. */
-        if (substr($data, 0, 3) === "\xEF\xBB\xBF") {
-            $data = substr($data, 3);
+        if (substr((string) $data, 0, 3) === "\xEF\xBB\xBF") {
+            $data = substr((string) $data, 3);
         }
 
         /* All U+0000 NULL characters in the input must be replaced
@@ -112,7 +112,7 @@ class HTML5_InputStream {
                 "\n",
                 "\n"
             ),
-            $data
+            $data ?: ''
         );
 
         /* Any occurrences of any characters in the ranges U+0001 to
@@ -141,7 +141,7 @@ class HTML5_InputStream {
                 |
                     [\xF0-\xF4][\x8F-\xBF]\xBF[\xBE\xBF] # U+nFFFE and U+nFFFF (1 <= n <= 10_{16})
                 )/x',
-                $data,
+                (string) $data,
                 $matches
             );
             for ($i = 0; $i < $count; $i++) {
@@ -156,7 +156,7 @@ class HTML5_InputStream {
 
         $this->data = $data;
         $this->char = 0;
-        $this->EOF  = strlen($data);
+        $this->EOF  = strlen((string) $data);
     }
 
     /**
@@ -167,7 +167,7 @@ class HTML5_InputStream {
         if($this->EOF) {
             // Add one to $this->char because we want the number for the next
             // byte to be processed.
-            return substr_count($this->data, "\n", 0, min($this->char, $this->EOF)) + 1;
+            return substr_count((string) $this->data, "\n", 0, min($this->char, $this->EOF)) + 1;
         } else {
             // If the string is empty, we are on the first line (sorta).
             return 1;
@@ -183,29 +183,29 @@ class HTML5_InputStream {
         // one (to make it point to the next character, the one we want the
         // position of) added to it because strrpos's behaviour includes the
         // final offset byte.
-        $lastLine = strrpos($this->data, "\n", $this->char - 1 - strlen($this->data));
+        $lastLine = strrpos((string) $this->data, "\n", $this->char - 1 - strlen((string) $this->data));
 
         // However, for here we want the length up until the next byte to be
         // processed, so add one to the current byte ($this->char).
         if($lastLine !== false) {
-            $findLengthOf = substr($this->data, $lastLine + 1, $this->char - 1 - $lastLine);
+            $findLengthOf = substr((string) $this->data, $lastLine + 1, $this->char - 1 - $lastLine);
         } else {
-            $findLengthOf = substr($this->data, 0, $this->char);
+            $findLengthOf = substr((string) $this->data, 0, $this->char);
         }
 
         // Get the length for the string we need.
         if(extension_loaded('iconv')) {
-            return iconv_strlen($findLengthOf, 'utf-8');
+            return iconv_strlen((string) $findLengthOf, 'utf-8');
         } elseif(extension_loaded('mbstring')) {
-            return mb_strlen($findLengthOf, 'utf-8');
+            return mb_strlen((string) $findLengthOf, 'utf-8');
         } elseif(extension_loaded('xml')) {
-            return strlen(utf8_decode($findLengthOf));
+            return strlen(utf8_decode((string) $findLengthOf));
         } else {
-            $count = count_chars($findLengthOf);
+            $count = count_chars((string) $findLengthOf);
             // 0x80 = 0x7F - 0 + 1 (one added to get inclusive range)
             // 0x33 = 0xF4 - 0x2C + 1 (one added to get inclusive range)
-            return array_sum(array_slice($count, 0, 0x80)) +
-                   array_sum(array_slice($count, 0xC2, 0x33));
+            return array_sum(array_slice($count ?: [], 0, 0x80)) +
+                   array_sum(array_slice($count ?: [], 0xC2, 0x33));
         }
     }
 
@@ -225,7 +225,7 @@ class HTML5_InputStream {
      */
     public function remainingChars() {
         if($this->char < $this->EOF) {
-            $data = substr($this->data, $this->char);
+            $data = substr((string) $this->data, (int) $this->char);
             $this->char = $this->EOF;
             return $data;
         } else {
@@ -241,11 +241,11 @@ class HTML5_InputStream {
     public function charsUntil($bytes, $max = null) {
         if ($this->char < $this->EOF) {
             if ($max === 0 || $max) {
-                $len = strcspn($this->data, $bytes, $this->char, $max);
+                $len = strcspn((string) $this->data, (string) $bytes, (int) $this->char, $max);
             } else {
-                $len = strcspn($this->data, $bytes, $this->char);
+                $len = strcspn((string) $this->data, (string) $bytes, (int) $this->char);
             }
-            $string = (string) substr($this->data, $this->char, $len);
+            $string = (string) substr((string) $this->data, (int) $this->char, $len);
             $this->char += $len;
             return $string;
         } else {
@@ -261,11 +261,11 @@ class HTML5_InputStream {
     public function charsWhile($bytes, $max = null) {
         if ($this->char < $this->EOF) {
             if ($max === 0 || $max) {
-                $len = strspn($this->data, $bytes, $this->char, $max);
+                $len = strspn((string) $this->data, (string) $bytes, (int) $this->char, $max);
             } else {
-                $len = strspn($this->data, $bytes, $this->char);
+                $len = strspn((string) $this->data, (string) $bytes, (int) $this->char);
             }
-            $string = (string) substr($this->data, $this->char, $len);
+            $string = (string) substr((string) $this->data, (int) $this->char, $len);
             $this->char += $len;
             return $string;
         } else {

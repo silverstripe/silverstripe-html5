@@ -3188,7 +3188,7 @@ class HTML5_TreeBuilder {
         if ($data === '') return;
         if ($this->ignore_lf_token) {
             if ($data[0] === "\n") {
-                $data = substr($data, 1);
+                $data = substr((string) $data, 1);
                 if ($data === false) return;
             }
         }
@@ -3225,7 +3225,7 @@ class HTML5_TreeBuilder {
             return false;
         }
 
-        $leng = count($this->stack);
+        $leng = count($this->stack ?: []);
 
         for($n = 0; $n < $leng; $n++) {
             /* 1. Initialise node to be the current node (the bottommost node of
@@ -3267,7 +3267,7 @@ class HTML5_TreeBuilder {
     private function reconstructActiveFormattingElements() {
         /* 1. If there are no entries in the list of active formatting elements,
         then there is nothing to reconstruct; stop this algorithm. */
-        $formatting_elements = count($this->a_formatting);
+        $formatting_elements = count($this->a_formatting ?: []);
 
         if($formatting_elements === 0) {
             return false;
@@ -3281,7 +3281,7 @@ class HTML5_TreeBuilder {
         formatting elements is a marker, or if it is an element that is in the
         stack of open elements, then there is nothing to reconstruct; stop this
         algorithm. */
-        if($entry === self::MARKER || in_array($entry, $this->stack, true)) {
+        if($entry === self::MARKER || in_array($entry, $this->stack ?: [], true)) {
             return false;
         }
 
@@ -3300,7 +3300,7 @@ class HTML5_TreeBuilder {
 
             /* 6. If entry is neither a marker nor an element that is also in
             thetack of open elements, go to step 4. */
-            if($entry === self::MARKER || in_array($entry, $this->stack, true)) {
+            if($entry === self::MARKER || in_array($entry, $this->stack ?: [], true)) {
                 break;
             }
         }
@@ -3365,7 +3365,7 @@ class HTML5_TreeBuilder {
         $node = end($this->stack);
         $elements = array_diff(array('dc', 'dd', 'ds', 'dt', 'li', 'p', 'td', 'th', 'tr'), $exclude);
 
-        while(in_array(end($this->stack)->tagName, $elements)) {
+        while(in_array(end($this->stack)->tagName, $elements ?: [])) {
             array_pop($this->stack);
         }
     }
@@ -3373,13 +3373,13 @@ class HTML5_TreeBuilder {
     private function getElementCategory($node) {
         if (!is_object($node)) debug_print_backtrace();
         $name = $node->tagName;
-        if(in_array($name, $this->special))
+        if(in_array($name, $this->special ?: []))
             return self::SPECIAL;
 
-        elseif(in_array($name, $this->scoping))
+        elseif(in_array($name, $this->scoping ?: []))
             return self::SCOPING;
 
-        elseif(in_array($name, $this->formatting))
+        elseif(in_array($name, $this->formatting ?: []))
             return self::FORMATTING;
 
         else
@@ -3394,7 +3394,7 @@ class HTML5_TreeBuilder {
         while(true) {
             $name = end($this->stack)->tagName;
 
-            if(in_array($name, $elements)) {
+            if(in_array($name, $elements ?: [])) {
                 break;
             } else {
                 array_pop($this->stack);
@@ -3405,7 +3405,7 @@ class HTML5_TreeBuilder {
     private function resetInsertionMode($context = null) {
         /* 1. Let last be false. */
         $last = false;
-        $leng = count($this->stack);
+        $leng = count($this->stack ?: []);
 
         for($n = $leng - 1; $n >= 0; $n--) {
             /* 2. Let node be the last node in the stack of open elements. */
