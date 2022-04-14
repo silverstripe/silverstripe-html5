@@ -57,7 +57,7 @@ class HTML5_TestableTokenizer extends HTML5_Tokenizer
                 break;
             case self::CHARACTER:
             case self::SPACECHARACTER:
-                if (count($this->outputTokens)) {
+                if (count($this->outputTokens ?? [])) {
                     $old = array_pop($this->outputTokens);
                     if ($old[0] === 'Character') {
                         $old[1] .= $token['data'];

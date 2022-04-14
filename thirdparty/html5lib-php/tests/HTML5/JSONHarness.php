@@ -9,7 +9,7 @@ abstract class HTML5_JSONHarness extends HTML5_DataHarness
     protected $data;
     public function __construct() {
         parent::__construct();
-        $this->data  = json_decode(file_get_contents($this->filename));
+        $this->data  = json_decode(file_get_contents($this->filename ?? '') ?? '');
     }
     public function getDescription($test) {
         return $test->description;

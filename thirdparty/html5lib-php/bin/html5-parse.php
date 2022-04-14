@@ -6,5 +6,5 @@ if (!isset($argv[1])) {
 } else {
     $file = $argv[1];
 }
-$result = HTML5_Parser::parse(file_get_contents($file));
+$result = HTML5_Parser::parse(file_get_contents($file ?? ''));
 // nop

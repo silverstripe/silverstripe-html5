@@ -12,7 +12,7 @@ class HTML5_TestData
         $full_glob =
             realpath(dirname(__FILE__) . '/../../../testdata/' . $type) .
             DIRECTORY_SEPARATOR . $glob;
-        return glob($full_glob);
+        return glob($full_glob ?? '');
     }
     /**
      * This function generates unique test case classes corresponding
@@ -20,11 +20,11 @@ class HTML5_TestData
      */
     static public function generateTestCases($base, $prefix, $type, $glob) {
         foreach (HTML5_TestData::getList($type, $glob) as $filename) {
-            $name = str_replace('-', '', basename($filename));
-            $name = ucfirst(substr($name, 0, strcspn($name, '.')));
+            $name = str_replace('-', '', basename($filename ?? ''));
+            $name = ucfirst(substr($name ?? '', 0, strcspn($name ?? '', '.')));
             if ($type === 'tree-construction') {
                 // skip XFOREIGN tests for now
-                $num = (int) substr($name, 5);
+                $num = (int) substr($name ?? '', 5);
                 if ($num >= 9) continue;
             }
             $pfilename = var_export($filename, true);
@@ -39,13 +39,13 @@ class HTML5_TestData
         $test = array();
         $newTestHeading = null;
         $heading = null;
-        foreach (explode("\n", file_get_contents($filename)) as $line) {
+        foreach (explode("\n", file_get_contents($filename ?? '') ?? '') as $line) {
             if ($line !== '' && $line[0] === '#') {
-                $newHeading = substr($line, 1);
+                $newHeading = substr($line ?? '', 1);
                 if (!$newTestHeading) {
                     $newTestHeading = $newHeading;
                 } elseif ($newHeading === $newTestHeading) {
-                    $test[$heading] = substr($test[$heading], 0, -1);
+                    $test[$heading] = substr($test[$heading] ?? '', 0, -1);
                     $this->tests[] = $test;
                     $test = array();
                 }
@@ -56,13 +56,13 @@ class HTML5_TestData
             }
         }
         if (!empty($test)) {
-            $test[$heading] = substr($test[$heading], 0, -1);
+            $test[$heading] = substr($test[$heading] ?? '', 0, -1);
             $this->tests[] = $test;
         }
         // normalize
         foreach ($this->tests as &$test) {
             foreach ($test as $key => $value) {
-                $test[$key] = rtrim($value, "\n");
+                $test[$key] = rtrim($value ?? '', "\n");
             }
         }
     }
@@ -131,7 +131,7 @@ class HTML5_TestData
                             $ans = 'xmlns '; break;
                         }
                         // XSKETCHY: needed for our horrible xlink hack
-                        $name = str_replace(':', ' ', $attr->localName);
+                        $name = str_replace(':', ' ', $attr->localName ?? '');
                         $subnodes[] = "{$ans}{$name}=\"{$attr->value}\"";
                     }
                     sort($subnodes);

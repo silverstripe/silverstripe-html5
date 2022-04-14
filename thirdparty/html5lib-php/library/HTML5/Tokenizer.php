@@ -135,7 +135,7 @@ class HTML5_Tokenizer {
                     /* Consume the next input character */
                     $char = $this->stream->char();
                     $lastFourChars .= $char;
-                    if (strlen($lastFourChars) > 4) $lastFourChars = substr($lastFourChars, -4);
+                    if (strlen($lastFourChars ?? '') > 4) $lastFourChars = substr($lastFourChars ?? '', -4);
 
                     // see below for meaning
                     $hyp_cond = 
@@ -213,7 +213,7 @@ class HTML5_Tokenizer {
                     } elseif(
                         $char === '>' &&
                         $gt_cond &&
-                        substr($lastFourChars, 1) === '-->'
+                        substr($lastFourChars ?? '', 1) === '-->'
                     ) {
                         /* If the content model flag is set to either the RCDATA state or
                         the CDATA state, and the escape flag is true, and the last three
@@ -248,7 +248,7 @@ class HTML5_Tokenizer {
                             'data' => $char . $chars
                         ));
                         $lastFourChars .= $chars;
-                        if (strlen($lastFourChars) > 4) $lastFourChars = substr($lastFourChars, -4);
+                        if (strlen($lastFourChars ?? '') > 4) $lastFourChars = substr($lastFourChars ?? '', -4);
 
                     } else {
                         /* Anything else
@@ -274,7 +274,7 @@ class HTML5_Tokenizer {
                         ));
 
                         $lastFourChars .= $chars;
-                        if (strlen($lastFourChars) > 4) $lastFourChars = substr($lastFourChars, -4);
+                        if (strlen($lastFourChars ?? '') > 4) $lastFourChars = substr($lastFourChars ?? '', -4);
 
                         $state = 'data';
                     }
@@ -351,7 +351,7 @@ class HTML5_Tokenizer {
                                 point), then switch to the tag name state. (Don't emit the token
                                 yet; further details will be filled in before it is emitted.) */
                                 $this->token = array(
-                                    'name'  => strtolower($char),
+                                    'name'  => strtolower($char ?? ''),
                                     'type'  => self::STARTTAG,
                                     'attr'  => array()
                                 );
@@ -427,7 +427,7 @@ class HTML5_Tokenizer {
                     ) {
                         /* If the content model flag is set to the RCDATA or CDATA
                         states... */
-                        $name = strtolower($this->stream->charsWhile(self::ALPHA));
+                        $name = strtolower($this->stream->charsWhile(self::ALPHA) ?? '');
                         $following = $this->stream->char();
                         $this->stream->unget();
                         if (
@@ -489,7 +489,7 @@ class HTML5_Tokenizer {
                             switch to the tag name state. (Don't emit the token yet; further details
                             will be filled in before it is emitted.) */
                             $this->token = array(
-                                'name'  => strtolower($char),
+                                'name'  => strtolower($char ?? ''),
                                 'type'  => self::ENDTAG
                             );
 
@@ -635,7 +635,7 @@ class HTML5_Tokenizer {
                         point), and its value to the empty string. Switch to the
                         attribute name state.*/
                         $this->token['attr'][] = array(
-                            'name'  => strtolower($char),
+                            'name'  => strtolower($char ?? ''),
                             'value' => ''
                         );
 
@@ -716,7 +716,7 @@ class HTML5_Tokenizer {
                         state. */
                         $chars = $this->stream->charsWhile(self::UPPER_ALPHA);
 
-                        $last = count($this->token['attr']) - 1;
+                        $last = count($this->token['attr'] ?? []) - 1;
                         $this->token['attr'][$last]['name'] .= strtolower($char . $chars);
 
                         $state = 'attribute name';
@@ -750,7 +750,7 @@ class HTML5_Tokenizer {
                         Stay in the attribute name state. */
                         $chars = $this->stream->charsUntil("\t\n\x0C /=>\"'" . self::UPPER_ALPHA);
 
-                        $last = count($this->token['attr']) - 1;
+                        $last = count($this->token['attr'] ?? []) - 1;
                         $this->token['attr'][$last]['name'] .= $char . $chars;
 
                         $state = 'attribute name';
@@ -803,7 +803,7 @@ class HTML5_Tokenizer {
                         point), and its value to the empty string. Switch to the
                         attribute name state. */
                         $this->token['attr'][] = array(
-                            'name'  => strtolower($char),
+                            'name'  => strtolower($char ?? ''),
                             'value' => ''
                         );
 
@@ -910,7 +910,7 @@ class HTML5_Tokenizer {
                         /* Anything else
                         Append the current input character to the current attribute's value.
                         Switch to the attribute value (unquoted) state. */
-                        $last = count($this->token['attr']) - 1;
+                        $last = count($this->token['attr'] ?? []) - 1;
                         $this->token['attr'][$last]['value'] .= $char;
 
                         $state = 'attribute value (unquoted)';
@@ -950,7 +950,7 @@ class HTML5_Tokenizer {
                         Stay in the attribute value (double-quoted) state. */
                         $chars = $this->stream->charsUntil('"&');
 
-                        $last = count($this->token['attr']) - 1;
+                        $last = count($this->token['attr'] ?? []) - 1;
                         $this->token['attr'][$last]['value'] .= $char . $chars;
 
                         $state = 'attribute value (double-quoted)';
@@ -988,7 +988,7 @@ class HTML5_Tokenizer {
                         Stay in the attribute value (single-quoted) state. */
                         $chars = $this->stream->charsUntil("'&");
 
-                        $last = count($this->token['attr']) - 1;
+                        $last = count($this->token['attr'] ?? []) - 1;
                         $this->token['attr'][$last]['value'] .= $char . $chars;
 
                         $state = 'attribute value (single-quoted)';
@@ -1049,7 +1049,7 @@ class HTML5_Tokenizer {
                         Stay in the attribute value (unquoted) state. */
                         $chars = $this->stream->charsUntil("\t\n\x0c &>\"'=");
 
-                        $last = count($this->token['attr']) - 1;
+                        $last = count($this->token['attr'] ?? []) - 1;
                         $this->token['attr'][$last]['value'] .= $char . $chars;
 
                         $state = 'attribute value (unquoted)';
@@ -1179,7 +1179,7 @@ class HTML5_Tokenizer {
                     /* Otherwise if the next seven characters are a case-insensitive match
                     for the word "DOCTYPE", then consume those characters and switch to the
                     DOCTYPE state. */
-                    } elseif(strtoupper($alpha) === 'DOCTYPE') {
+                    } elseif(strtoupper($alpha ?? '') === 'DOCTYPE') {
                         $state = 'DOCTYPE';
 
                     // XXX not implemented
@@ -1526,7 +1526,7 @@ class HTML5_Tokenizer {
                         the character's code point). Switch to the DOCTYPE name
                         state. */
                         $this->token = array(
-                            'name' => strtolower($char),
+                            'name' => strtolower($char ?? ''),
                             'type' => self::DOCTYPE,
                             'error' => true
                         );
@@ -1589,7 +1589,7 @@ class HTML5_Tokenizer {
                         Append the lowercase version of the input character
                         (add 0x0020 to the character's code point) to the current
                         DOCTYPE token's name. Stay in the DOCTYPE name state. */
-                        $this->token['name'] .= strtolower($char);
+                        $this->token['name'] .= strtolower($char ?? '');
 
                     } elseif($char === false) {
                         /* EOF
@@ -2289,7 +2289,7 @@ class HTML5_Tokenizer {
             // alphanumeric so we can just concat it to whatever we get later).
             $this->stream->unget();
             if ($char !== false) {
-                $chars = substr($chars, 0, -1);
+                $chars = substr($chars ?? '', 0, -1);
             }
 
             /* If no match can be made, then this is a parse error.
@@ -2305,7 +2305,7 @@ class HTML5_Tokenizer {
             /* If the last character matched is not a U+003B SEMICOLON
             (;), there is a parse error. */
             $semicolon = true;
-            if (substr($id, -1) !== ';') {
+            if (substr($id ?? '', -1) !== ';') {
                 $this->emitToken(array(
                     'type' => self::PARSEERROR,
                     'data' => 'named-entity-without-semicolon'
@@ -2324,8 +2324,8 @@ class HTML5_Tokenizer {
             and nothing is returned. */
             if ($inattr && !$semicolon) {
                 // The next character is either the next character in $chars or in the stream.
-                if (strlen($chars) > strlen($id)) {
-                    $next = substr($chars, strlen($id), 1);
+                if (strlen($chars ?? '') > strlen($id ?? '')) {
+                    $next = substr($chars ?? '', strlen($id ?? ''), 1);
                 } else {
                     $next = $this->stream->char();
                     $this->stream->unget();
@@ -2342,7 +2342,7 @@ class HTML5_Tokenizer {
             /* Otherwise, return a character token for the character
             corresponding to the character reference name (as given
             by the second column of the named character references table). */
-            return HTML5_Data::utf8chr($codepoint) . substr($chars, strlen($id));
+            return HTML5_Data::utf8chr($codepoint) . substr($chars ?? '', strlen($id ?? ''));
         }
     }
 
@@ -2359,7 +2359,7 @@ class HTML5_Tokenizer {
             ? '&'
             : $entity;
 
-        $last = count($this->token['attr']) - 1;
+        $last = count($this->token['attr'] ?? []) - 1;
         $this->token['attr'][$last]['value'] .= $char;
 
         /* Finally, switch back to the attribute value state that you
@@ -2377,7 +2377,7 @@ class HTML5_Tokenizer {
             }
         }
         if($token['type'] === self::ENDTAG && !empty($token['attr'])) {
-            for ($i = 0; $i < count($token['attr']); $i++) {
+            for ($i = 0; $i < count($token['attr'] ?? []); $i++) {
                 $this->emitToken(array(
                     'type' => self::PARSEERROR,
                     'data' => 'attributes-in-end-tag'
