@@ -221,7 +221,11 @@ class HTML5_TreeBuilder {
             // This call can fail for particularly pathological cases (namely,
             // the qualifiedName parameter ($token['name']) could be missing.
             if ($token['name']) {
-                $doctype = $impl->createDocumentType($token['name'], $token['public'], $token['system']);
+                $doctype = $impl->createDocumentType(
+                    $token['name'],
+                    $token['public'] ?? '',
+                    $token['system'] ?? ''
+                );
                 $this->dom->appendChild($doctype);
             } else {
                 // It looks like libxml's not actually *able* to express this case.
