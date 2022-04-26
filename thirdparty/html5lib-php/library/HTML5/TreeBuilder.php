@@ -232,8 +232,8 @@ class HTML5_TreeBuilder {
                 // So... don't.
                 $this->dom->emptyDoctype = true;
             }
-            $public = is_null($token['public']) ? false : strtolower($token['public']);
-            $system = is_null($token['system']) ? false : strtolower($token['system']);
+            $public = is_null($token['public']) ? false : strtolower($token['public'] ?? '');
+            $system = is_null($token['system']) ? false : strtolower($token['system'] ?? '');
             $publicStartsWithForQuirks = array(
              "+//silmaril//dtd html pro v0r11 19970101//",
              "-//advasoft ltd//dtd html 3.0 aswedit + extensions//",
@@ -309,21 +309,21 @@ class HTML5_TreeBuilder {
             // first, do easy checks
             if (
                 !empty($token['force-quirks']) ||
-                strtolower($token['name']) !== 'html'
+                strtolower($token['name'] ?? '') !== 'html'
             ) {
                 $this->quirks_mode = self::QUIRKS_MODE;
             } else {
                 do {
                     if ($system) {
                         foreach ($publicStartsWithAndSystemForQuirks as $x) {
-                            if (strncmp($public, $x, strlen($x)) === 0) {
+                            if (strncmp($public ?? '', $x ?? '', strlen($x ?? '')) === 0) {
                                 $this->quirks_mode = self::QUIRKS_MODE;
                                 break;
                             }
                         }
                         if (!is_null($this->quirks_mode)) break;
                         foreach ($publicStartsWithAndSystemForLimitedQuirks as $x) {
-                            if (strncmp($public, $x, strlen($x)) === 0) {
+                            if (strncmp($public ?? '', $x ?? '', strlen($x ?? '')) === 0) {
                                 $this->quirks_mode = self::LIMITED_QUIRKS_MODE;
                                 break;
                             }
@@ -338,7 +338,7 @@ class HTML5_TreeBuilder {
                     }
                     if (!is_null($this->quirks_mode)) break;
                     foreach ($publicStartsWithForLimitedQuirks as $x) {
-                        if (strncmp($public, $x, strlen($x)) === 0) {
+                        if (strncmp($public ?? '', $x ?? '', strlen($x ?? '')) === 0) {
                             $this->quirks_mode = self::LIMITED_QUIRKS_MODE;
                         }
                     }
@@ -348,7 +348,7 @@ class HTML5_TreeBuilder {
                         break;
                     }
                     foreach ($publicStartsWithForQuirks as $x) {
-                        if (strncmp($public, $x, strlen($x)) === 0) {
+                        if (strncmp($public ?? '', $x ?? '', strlen($x ?? '')) === 0) {
                             $this->quirks_mode = self::QUIRKS_MODE;
                             break;
                         }
@@ -702,7 +702,7 @@ class HTML5_TreeBuilder {
              * stack of open elements. */
             $this->stack[] = $this->head_pointer;
             $this->processWithRulesFor($token, self::IN_HEAD);
-            array_splice($this->stack, array_search($this->head_pointer, $this->stack, true), 1);
+            array_splice($this->stack, array_search($this->head_pointer, $this->stack ?? [], true) ?? 0, 1);
 
         // inversion of specification
         } elseif(
@@ -741,7 +741,7 @@ class HTML5_TreeBuilder {
                  * U+000A LINE FEED (LF), U+000C FORM FEED (FF),  or U+0020
                  * SPACE, then set the frameset-ok flag to "not ok". */
                 // i.e., if any of the characters is not whitespace
-                if (strlen($token['data']) !== strspn($token['data'], HTML5_Tokenizer::WHITESPACE)) {
+                if (strlen($token['data'] ?? '') !== strspn($token['data'] ?? '', HTML5_Tokenizer::WHITESPACE ?? '')) {
                     $this->flag_frameset_ok = false;
                 }
             break;
@@ -789,7 +789,7 @@ class HTML5_TreeBuilder {
                     elements is not a body element, or, if the stack of open
                     elements has only one node on it, then ignore the token.
                     (fragment case) */
-                    if(count($this->stack) === 1 || $this->stack[1]->tagName !== 'body') {
+                    if(count($this->stack ?? []) === 1 || $this->stack[1]->tagName !== 'body') {
                         $this->ignored = true;
                         // Ignore
 
@@ -813,7 +813,7 @@ class HTML5_TreeBuilder {
                      * not a body element, or, if the stack of open elements
                      * has only one node on it, then ignore the token.
                      * (fragment case) */
-                    if(count($this->stack) === 1 || $this->stack[1]->tagName !== 'body') {
+                    if(count($this->stack ?? []) === 1 || $this->stack[1]->tagName !== 'body') {
                         $this->ignored = true;
                         // Ignore
                     } elseif (!$this->flag_frameset_ok) {
@@ -934,7 +934,7 @@ class HTML5_TreeBuilder {
                     /* 1. Set the frameset-ok flag to "not ok". */
                     $this->flag_frameset_ok = false;
 
-                    $stack_length = count($this->stack) - 1;
+                    $stack_length = count($this->stack ?? []) - 1;
                     for($n = $stack_length; 0 <= $n; $n--) {
                         /* 2. Initialise node to be the current node (the
                         bottommost node of the stack). */
@@ -1020,7 +1020,7 @@ class HTML5_TreeBuilder {
                     of active formatting elements and the stack of open
                     elements if the end tag didn't already remove it (it
                     might not have if the element is not in table scope). */
-                    $leng = count($this->a_formatting);
+                    $leng = count($this->a_formatting ?? []);
 
                     for($n = $leng - 1; $n >= 0; $n--) {
                         if($this->a_formatting[$n] === self::MARKER) {
@@ -1032,13 +1032,13 @@ class HTML5_TreeBuilder {
                                 'name' => 'a',
                                 'type' => HTML5_Tokenizer::ENDTAG
                             ));
-                            if (in_array($a, $this->a_formatting)) {
-                                $a_i = array_search($a, $this->a_formatting, true);
-                                if($a_i !== false) array_splice($this->a_formatting, $a_i, 1);
+                            if (in_array($a, $this->a_formatting ?? [])) {
+                                $a_i = array_search($a, $this->a_formatting ?? [], true);
+                                if($a_i !== false) array_splice($this->a_formatting, $a_i ?? 0, 1);
                             }
-                            if (in_array($a, $this->stack)) {
-                                $a_i = array_search($a, $this->stack, true);
-                                if ($a_i !== false) array_splice($this->stack, $a_i, 1);
+                            if (in_array($a, $this->stack ?? [])) {
+                                $a_i = array_search($a, $this->stack ?? [], true);
+                                if ($a_i !== false) array_splice($this->stack, $a_i ?? 0, 1);
                             }
                             break;
                         }
@@ -1554,7 +1554,7 @@ class HTML5_TreeBuilder {
                     $this->form_pointer = null;
                     /* If node is null or the stack of open elements does not
                         * have node in scope, then this is a parse error; ignore the token. */
-                    if ($node === null || !in_array($node, $this->stack)) {
+                    if ($node === null || !in_array($node, $this->stack ?? [])) {
                         // parse error
                         $this->ignored = true;
                     } else {
@@ -1565,7 +1565,7 @@ class HTML5_TreeBuilder {
                             // parse error
                         }
                         /* 3. Remove node from the stack of open elements. */
-                        array_splice($this->stack, array_search($node, $this->stack, true), 1);
+                        array_splice($this->stack, array_search($node, $this->stack ?? [], true) ?? 0, 1);
                     }
 
                 break;
@@ -1665,7 +1665,7 @@ class HTML5_TreeBuilder {
                         with one of those tag names has been popped from the stack. */
                         do {
                             $node = array_pop($this->stack);
-                        } while (!in_array($node->tagName, $elements));
+                        } while (!in_array($node->tagName, $elements ?? []));
                     } else {
                         // parse error
                     }
@@ -1691,7 +1691,7 @@ class HTML5_TreeBuilder {
 
                             } elseif($this->a_formatting[$a]->tagName === $token['name']) {
                                 $formatting_element = $this->a_formatting[$a];
-                                $in_stack = in_array($formatting_element, $this->stack, true);
+                                $in_stack = in_array($formatting_element, $this->stack ?? [], true);
                                 $fe_af_pos = $a;
                                 break;
                             }
@@ -1728,8 +1728,8 @@ class HTML5_TreeBuilder {
                         than the formatting element, and is not an element in
                         the phrasing or formatting categories. There might
                         not be one. */
-                        $fe_s_pos = array_search($formatting_element, $this->stack, true);
-                        $length = count($this->stack);
+                        $fe_s_pos = array_search($formatting_element, $this->stack ?? [], true);
+                        $length = count($this->stack ?? []);
 
                         for($s = $fe_s_pos + 1; $s < $length; $s++) {
                             $category = $this->getElementCategory($this->stack[$s]);
@@ -1782,8 +1782,8 @@ class HTML5_TreeBuilder {
                                 formatting elements, then remove node from
                                 the stack of open elements and then go back
                                 to step 1. */
-                                if(!in_array($node, $this->a_formatting, true)) {
-                                    array_splice($this->stack, $n, 1);
+                                if(!in_array($node, $this->a_formatting ?? [], true)) {
+                                    array_splice($this->stack, $n ?? 0, 1);
 
                                 } else {
                                     break;
@@ -1801,7 +1801,7 @@ class HTML5_TreeBuilder {
                             be immediately after the node in the list of
                             active formatting elements. */
                             } elseif($last_node === $furthest_block) {
-                                $bookmark = array_search($node, $this->a_formatting, true) + 1;
+                                $bookmark = array_search($node, $this->a_formatting ?? [], true) + 1;
                             }
 
                             /* 6.5 Create an element for the token for which
@@ -1814,8 +1814,8 @@ class HTML5_TreeBuilder {
                             // we don't know what the token is anymore
                             // XDOM
                             $clone = $node->cloneNode();
-                            $a_pos = array_search($node, $this->a_formatting, true);
-                            $s_pos = array_search($node, $this->stack, true);
+                            $a_pos = array_search($node, $this->a_formatting ?? [], true);
+                            $s_pos = array_search($node, $this->stack ?? [], true);
                             $this->a_formatting[$a_pos] = $clone;
                             $this->stack[$s_pos] = $clone;
                             $node = $clone;
@@ -1879,23 +1879,23 @@ class HTML5_TreeBuilder {
                         of active formatting elements, and insert the new element
                         into the list of active formatting elements at the
                         position of the aforementioned bookmark. */
-                        $fe_af_pos = array_search($formatting_element, $this->a_formatting, true);
-                        array_splice($this->a_formatting, $fe_af_pos, 1);
+                        $fe_af_pos = array_search($formatting_element, $this->a_formatting ?? [], true);
+                        array_splice($this->a_formatting, $fe_af_pos ?? 0, 1);
 
-                        $af_part1 = array_slice($this->a_formatting, 0, $bookmark - 1);
-                        $af_part2 = array_slice($this->a_formatting, $bookmark);
+                        $af_part1 = array_slice($this->a_formatting ?? [], 0, $bookmark - 1);
+                        $af_part2 = array_slice($this->a_formatting ?? [], $bookmark ?? 0);
                         $this->a_formatting = array_merge($af_part1, array($clone), $af_part2);
 
                         /* 12. Remove the formatting element from the stack
                         of open elements, and insert the new element into the stack
                         of open elements immediately below the position of the
                         furthest block in that stack. */
-                        $fe_s_pos = array_search($formatting_element, $this->stack, true);
-                        array_splice($this->stack, $fe_s_pos, 1);
+                        $fe_s_pos = array_search($formatting_element, $this->stack ?? [], true);
+                        array_splice($this->stack, $fe_s_pos ?? 0, 1);
 
-                        $fb_s_pos = array_search($furthest_block, $this->stack, true);
-                        $s_part1 = array_slice($this->stack, 0, $fb_s_pos + 1);
-                        $s_part2 = array_slice($this->stack, $fb_s_pos + 1);
+                        $fb_s_pos = array_search($furthest_block, $this->stack ?? [], true);
+                        $s_part1 = array_slice($this->stack ?? [], 0, $fb_s_pos + 1);
+                        $s_part2 = array_slice($this->stack ?? [], $fb_s_pos + 1);
                         $this->stack = array_merge($s_part1, array($clone), $s_part2);
 
                         /* 13. Jump back to step 1 in this series of steps. */
@@ -1923,7 +1923,7 @@ class HTML5_TreeBuilder {
 
                         /* Clear the list of active formatting elements up to the
                          * last marker. */
-                        $keys = array_keys($this->a_formatting, self::MARKER, true);
+                        $keys = array_keys($this->a_formatting ?? [], self::MARKER, true);
                         $marker = end($keys);
 
                         for($n = count($this->a_formatting) - 1; $n > $marker; $n--) {
@@ -2151,7 +2151,7 @@ class HTML5_TreeBuilder {
          * if it does, but that attribute's value is not an ASCII
          * case-insensitive match for the string "hidden", then: act as
          * described in the "anything else" entry below. */
-        ($type = $this->getAttr($token, 'type')) && strtolower($type) === 'hidden') {
+        ($type = $this->getAttr($token, 'type')) && strtolower($type ?? '') === 'hidden') {
             // I.e., if its an input with the type attribute == 'hidden'
             /* Otherwise */
             // parse error
@@ -2690,7 +2690,7 @@ class HTML5_TreeBuilder {
             immediately before it in the stack of open elements is an optgroup
             element, then act as if an end tag with the tag name "option" had
             been seen. */
-            $elements_in_stack = count($this->stack);
+            $elements_in_stack = count($this->stack ?? []);
 
             if($this->stack[$elements_in_stack - 1]->tagName === 'option' &&
             $this->stack[$elements_in_stack - 2]->tagName === 'optgroup') {
@@ -3192,7 +3192,7 @@ class HTML5_TreeBuilder {
         if ($data === '') return;
         if ($this->ignore_lf_token) {
             if ($data[0] === "\n") {
-                $data = substr($data, 1);
+                $data = substr($data ?? '', 1);
                 if ($data === false) return;
             }
         }
@@ -3229,7 +3229,7 @@ class HTML5_TreeBuilder {
             return false;
         }
 
-        $leng = count($this->stack);
+        $leng = count($this->stack ?? []);
 
         for($n = 0; $n < $leng; $n++) {
             /* 1. Initialise node to be the current node (the bottommost node of
@@ -3271,7 +3271,7 @@ class HTML5_TreeBuilder {
     private function reconstructActiveFormattingElements() {
         /* 1. If there are no entries in the list of active formatting elements,
         then there is nothing to reconstruct; stop this algorithm. */
-        $formatting_elements = count($this->a_formatting);
+        $formatting_elements = count($this->a_formatting ?? []);
 
         if($formatting_elements === 0) {
             return false;
@@ -3285,7 +3285,7 @@ class HTML5_TreeBuilder {
         formatting elements is a marker, or if it is an element that is in the
         stack of open elements, then there is nothing to reconstruct; stop this
         algorithm. */
-        if($entry === self::MARKER || in_array($entry, $this->stack, true)) {
+        if($entry === self::MARKER || in_array($entry, $this->stack ?? [], true)) {
             return false;
         }
 
@@ -3304,7 +3304,7 @@ class HTML5_TreeBuilder {
 
             /* 6. If entry is neither a marker nor an element that is also in
             thetack of open elements, go to step 4. */
-            if($entry === self::MARKER || in_array($entry, $this->stack, true)) {
+            if($entry === self::MARKER || in_array($entry, $this->stack ?? [], true)) {
                 break;
             }
         }
@@ -3369,7 +3369,7 @@ class HTML5_TreeBuilder {
         $node = end($this->stack);
         $elements = array_diff(array('dc', 'dd', 'ds', 'dt', 'li', 'p', 'td', 'th', 'tr'), $exclude);
 
-        while(in_array(end($this->stack)->tagName, $elements)) {
+        while(in_array(end($this->stack)->tagName, $elements ?? [])) {
             array_pop($this->stack);
         }
     }
@@ -3377,13 +3377,13 @@ class HTML5_TreeBuilder {
     private function getElementCategory($node) {
         if (!is_object($node)) debug_print_backtrace();
         $name = $node->tagName;
-        if(in_array($name, $this->special))
+        if(in_array($name, $this->special ?? []))
             return self::SPECIAL;
 
-        elseif(in_array($name, $this->scoping))
+        elseif(in_array($name, $this->scoping ?? []))
             return self::SCOPING;
 
-        elseif(in_array($name, $this->formatting))
+        elseif(in_array($name, $this->formatting ?? []))
             return self::FORMATTING;
 
         else
@@ -3398,7 +3398,7 @@ class HTML5_TreeBuilder {
         while(true) {
             $name = end($this->stack)->tagName;
 
-            if(in_array($name, $elements)) {
+            if(in_array($name, $elements ?? [])) {
                 break;
             } else {
                 array_pop($this->stack);
@@ -3409,7 +3409,7 @@ class HTML5_TreeBuilder {
     private function resetInsertionMode($context = null) {
         /* 1. Let last be false. */
         $last = false;
-        $leng = count($this->stack);
+        $leng = count($this->stack ?? []);
 
         for($n = $leng - 1; $n >= 0; $n--) {
             /* 2. Let node be the last node in the stack of open elements. */

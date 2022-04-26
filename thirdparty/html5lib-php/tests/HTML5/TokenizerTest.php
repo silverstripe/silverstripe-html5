@@ -45,12 +45,12 @@ abstract class HTML5_TokenizerHarness extends HTML5_JSONHarness
                 }
             }
             $this->assertIdentical($expect, $result,
-                'In test "'.str_replace('%', '%%', $test->description).
+                'In test "'.str_replace('%', '%%', $test->description ?? '').
                 '" with content model '.$flag.': %s'
             );
             if ($test->ignoreErrorOrder) {
                 $this->assertIdentical($expectedErrorCount, $resultErrorCount,
-                    'Wrong error count in test "'.str_replace('%', '%%', $test->description).
+                    'Wrong error count in test "'.str_replace('%', '%%', $test->description ?? '').
                     '" with content model '.$flag.': %s'
                 );
             }

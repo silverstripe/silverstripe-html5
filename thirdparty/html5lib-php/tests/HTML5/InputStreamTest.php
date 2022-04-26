@@ -50,7 +50,7 @@ class HTML5_InputStreamTest extends UnitTestCase
     public function testNull() {
         $stream = new HTML5_InputStream("\0\0\0");
         $this->assertIdentical("\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD", $stream->remainingChars(), 'Null character should be replaced by U+FFFD');
-        $this->assertIdentical(3, count($stream->errors), 'Null character should be throw parse error');
+        $this->assertIdentical(3, count($stream->errors ?? []), 'Null character should be throw parse error');
     }
     
     public function testCRLF() {
@@ -66,7 +66,7 @@ class HTML5_InputStreamTest extends UnitTestCase
     public function invalidParseErrorTestHandler($input, $numErrors, $name) {
         $stream = new HTML5_InputStream($input);
         $this->assertIdentical($input, $stream->remainingChars(), $name . ' (stream content)');
-        $this->assertIdentical($numErrors, count($stream->errors), $name . ' (number of errors)');
+        $this->assertIdentical($numErrors, count($stream->errors ?? []), $name . ' (number of errors)');
     }
     
     public function testInvalidParseError() {

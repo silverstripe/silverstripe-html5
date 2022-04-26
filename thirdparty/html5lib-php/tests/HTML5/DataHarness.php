@@ -33,7 +33,7 @@ abstract class HTML5_DataHarness extends UnitTestCase
         $this->tests = $this->getDataTests();
         // 1-indexed, to be consistent with Python
         $ret = array();
-        for ($i = 1; $i <= count($this->tests); $i++) {
+        for ($i = 1; $i <= count($this->tests ?? []); $i++) {
             $ret[] = "test_$i";
         }
         return $ret;
@@ -42,7 +42,7 @@ abstract class HTML5_DataHarness extends UnitTestCase
      * Emulates our test functions
      */
     public function __call($name, $args) {
-        list($test, $i) = explode("_", $name);
+        list($test, $i) = explode("_", $name ?? '');
         $this->invoke($this->tests[$i-1]);
     }
 }

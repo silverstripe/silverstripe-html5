@@ -19,7 +19,7 @@ class HTML5Value extends HTMLValue
 
         // Use HTML5 parser to parse the HTML fragment
         try {
-            $content = str_replace("\r\n", "\n", $content);
+            $content = str_replace("\r\n", "\n", $content ?? '');
             $parserPath = implode(
                 DIRECTORY_SEPARATOR,
                 [
