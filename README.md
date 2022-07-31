@@ -1,33 +1,31 @@
 # HTML5 support for SilverStripe
 
 [![CI](https://github.com/silverstripe/silverstripe-html5/actions/workflows/ci.yml/badge.svg)](https://github.com/silverstripe/silverstripe-html5/actions/workflows/ci.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-html5/?branch=master)
-[![codecov](https://codecov.io/gh/silverstripe/silverstripe-html5/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/silverstripe-html5)
-[![SilverStripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
+[![Silverstripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
 
 ## Requirements
 
-* SilverStripe 4.0 or higher
+* Silverstripe 4.0 or higher
 
-For a SilverStripe 3.x compatible version of this module, please see the [1.0 branch, or 1.x release line](https://github.com/silverstripe/silverstripe-html5/tree/1.0#readme).
+For a Silverstripe 3.x compatible version of this module, please see the [1.0 branch, or 1.x release line](https://github.com/silverstripe/silverstripe-html5/tree/1.0#readme).
 
 ## Summary
 
 This module adds further HTML 5 support to SilverStripe.
 
-Although SilverStripe supports using HTML 5 in templates out of the box, there are
+Although Silverstripe supports using HTML 5 in templates out of the box, there are
 some limitations in the use of HTML in the content managed through the CMS.
 
 #### HTMLText & HTMLVarchar
 
-This module allows SilverStripe to support HTML 5 in HTMLText and HTMLVarchar fields, by
+This module allows Silverstripe to support HTML 5 in HTMLText and HTMLVarchar fields, by
 providing a subclass of HTMLValue that uses the third party [html5lib](https://github.com/html5lib/html5lib-php)
 and causing the Injector to use this subclass by default.
 
-SilverStripe stores HTMLText and HTMLVarchar fields in models as strings, but
+Silverstripe stores HTMLText and HTMLVarchar fields in models as strings, but
 sometimes needs to convert these to DOM objects (for instance, to process shortcodes).
 
-Default SilverStripe behavior is to do this with DOMDocument#loadHTML, but that method
+Default Silverstripe behavior is to do this with DOMDocument#loadHTML, but that method
 throws an error when it encounters the new HTML5 element types. It also doesn't deal
 with unclosed elements and invalid HTML in the manner prescribed by the HTML5 spec.
 
