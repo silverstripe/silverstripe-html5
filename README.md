@@ -9,6 +9,8 @@
 
 For a Silverstripe 3.x compatible version of this module, please see the [1.0 branch, or 1.x release line](https://github.com/silverstripe/silverstripe-html5/tree/1.0#readme).
 
+This module is not compatible or required for Silverstripe CMS 5. HTML5 is natively used by Silverstripe CMS 5.
+
 ## Summary
 
 This module adds further HTML 5 support to SilverStripe.
